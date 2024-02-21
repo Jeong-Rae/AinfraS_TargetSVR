@@ -22,6 +22,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -73,7 +74,10 @@ public class User extends BaseTimeEntity implements UserDetails {
     }
 
     public void updatePassword(String password) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        this.password = bCryptPasswordEncoder.encode(password);
+        this.password = new BCryptPasswordEncoder().encode(password);
+    }
+
+    public boolean checkPassword(String password) {
+        return new BCryptPasswordEncoder().matches(password, this.password);
     }
 }

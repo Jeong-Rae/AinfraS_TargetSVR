@@ -1,8 +1,7 @@
 package io.goorm.ainfras.target.domain.User.dto;
 
-public record RegisterRequest(
+public record SignUpResponse(
         String email,
-        String password,
         String nickname
 ) {
 }
