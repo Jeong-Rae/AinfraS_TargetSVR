@@ -11,11 +11,11 @@ import lombok.Getter;
 @Table
 public class Item extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String code;
-    String name;
-    Integer price;
-    String seller;
+    private Long id;
+    private String code;
+    private String name;
+    private Integer price;
+    private String seller;
 
     @Builder
     public Item(String code, String name, Integer price, String seller) {
