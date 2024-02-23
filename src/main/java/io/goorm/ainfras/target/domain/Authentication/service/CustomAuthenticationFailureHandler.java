@@ -11,6 +11,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
@@ -20,6 +22,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
         LOGGER.info("[AuthenticationFailureHandler] login 오류 message: {}", exception.getMessage());
-        response.sendRedirect("/login?error=true&message=" + exception.getMessage());
+        response.sendRedirect("/login?error=true&message=" + URLEncoder.encode(exception.getMessage(), StandardCharsets.UTF_8));
     }
 }

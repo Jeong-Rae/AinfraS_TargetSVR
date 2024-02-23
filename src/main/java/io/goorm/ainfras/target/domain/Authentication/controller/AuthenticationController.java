@@ -3,6 +3,7 @@ package io.goorm.ainfras.target.domain.Authentication.controller;
 import io.goorm.ainfras.target.domain.Authentication.service.AuthenticationService;
 import io.goorm.ainfras.target.domain.User.dto.LoginRequest;
 import io.goorm.ainfras.target.domain.User.dto.SignUpRequest;
+import io.goorm.ainfras.target.global.interceptor.LogPrinter;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("register")
+    @LogPrinter
     public String register(@ModelAttribute SignUpRequest request, RedirectAttributes redirectAttributes) {
         try {
             authenticationService.save(request);

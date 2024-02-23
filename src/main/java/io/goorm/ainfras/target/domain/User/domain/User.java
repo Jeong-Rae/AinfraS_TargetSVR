@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder

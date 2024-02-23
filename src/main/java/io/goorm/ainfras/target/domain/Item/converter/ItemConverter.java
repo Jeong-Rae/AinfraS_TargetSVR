@@ -12,4 +12,8 @@ public class ItemConverter {
                 .price(itemDTO.price())
                 .build();
     }
+
+    public ItemDTO convert(Item item) {
+        return new ItemDTO(item.getName(), item.getPrice(), item.getCode());
+    }
 }

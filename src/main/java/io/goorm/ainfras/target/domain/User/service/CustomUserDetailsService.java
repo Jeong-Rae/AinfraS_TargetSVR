@@ -8,6 +8,7 @@ import io.goorm.ainfras.target.domain.User.dto.LoginResponse;
 import io.goorm.ainfras.target.domain.User.dto.SignUpRequest;
 import io.goorm.ainfras.target.domain.User.dto.SignUpResponse;
 import io.goorm.ainfras.target.domain.User.repository.UserRepository;
+import io.goorm.ainfras.target.global.interceptor.LogPrinter;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
+    @LogPrinter
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.getUserByEmail(username)
                 .orElseThrow(() -> {
@@ -40,14 +42,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Transactional
+    @LogPrinter
     public SignUpResponse saveUser(SignUpRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            LOGGER.debug("[saveUser] 이미 사용중인 이메일, email: {}", request.email());
+            LOGGER.info("[saveUser] 이미 사용중인 이메일, email: {}", request.email());
             throw new EntityExistsException("이미 사용중인 이메일입니다.");
         }
 
         if (userRepository.existsByNickname(request.nickname())) {
-            LOGGER.debug("[saveUser] 이미 사용중인 닉네임, nickname: {}", request.nickname());
+            LOGGER.info("[saveUser] 이미 사용중인 닉네임, nickname: {}", request.nickname());
             throw new EntityExistsException("이미 사용중인 닉네임입니다.");
         }
 
@@ -55,12 +58,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         user.updateRole(RoleType.USER);
         user.updatePassword(request.password());
         user = userRepository.save(user);
-        LOGGER.debug("[saveUser] 신규 사용자 등록, email: {}", request.email());
+        LOGGER.info("[saveUser] 신규 사용자 등록, email: {}", request.email());
 
         return userConverter.convert(user, SignUpResponse.class);
     }
 
     @Transactional
+    @LogPrinter
     public LoginResponse loginUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> {

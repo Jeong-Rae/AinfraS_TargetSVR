@@ -1,7 +1,7 @@
 package io.goorm.ainfras.target.domain.Authentication.service;
 
-import io.goorm.ainfras.target.domain.User.domain.User;
 import io.goorm.ainfras.target.domain.User.service.CustomUserDetailsService;
+import io.goorm.ainfras.target.global.interceptor.LogPrinter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,16 +19,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final PasswordEncoder passwordEncoder;
     @Override
+    @LogPrinter
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         UserDetails user = userDetailsService.loadUserByUsername(username);
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return new UsernamePasswordAuthenticationToken(username, password, user.getAuthorities());
-        } else {
-            throw new BadCredentialsException("Authentication failed for " + username);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("올바르지 않은 인증 정보입니다. user: " + username);
         }
+        return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
     }
 
     @Override

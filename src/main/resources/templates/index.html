@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Goorm Shop</title>
@@ -9,12 +9,17 @@
 
 <header class="bg-blue-500 p-4 text-white">
     <div class="container mx-auto flex justify-between">
-        <h1 class="text-xl">Goorm Shop</h1>
+        <a href="/home"><h1 class="text-xl">Goorm Shop</h1></a>
         <nav>
             <ul class="flex gap-4">
-                <li><a href="#" class="hover:underline">구매하러가기</a></li>
-                <li><a href="#" class="hover:underline">장바구니</a></li>
-                <li><a href="#" class="hover:underline">회원가입</a></li>
+                <li><a href="/home" class="hover:underline">구매하러가기</a></li>
+                <li><a href="/shopping-cart" class="hover:underline">장바구니</a></li>
+                <li><a href="#" class="hover:underline">내 정보</a></li>
+                <li>
+                    <form action="/logout" method="post">
+                        <button type="submit" class="hover:underline text-white bg-transparent border-none p-0">로그아웃</button>
+                    </form>
+                </li>
             </ul>
         </nav>
     </div>
@@ -27,10 +32,10 @@
             <h2 class="text-lg" th:text="${item.name}">상품 이름</h2>
             <p class="text-sm text-gray-600" th:text="${item.price} + '원'">가격</p>
             <button class="bg-blue-500 text-white p-2 mt-2">구매하기</button>
-            <button class="bg-gray-500 text-white p-2 mt-2">장바구니 추가</button>
+            <button class="bg-gray-500 text-white p-2 mt-2 add-to-cart" th:data-item-id="${item.id}">장바구니 추가</button>
         </div>
     </div>
 </main>
-
+<script src="/index.js"></script>
 </body>
 </html>

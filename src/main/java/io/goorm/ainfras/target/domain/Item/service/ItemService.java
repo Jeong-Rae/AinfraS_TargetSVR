@@ -6,6 +6,7 @@ import io.goorm.ainfras.target.domain.Item.dto.ItemDTO;
 import io.goorm.ainfras.target.domain.Item.dto.RegisterItemResponse;
 import io.goorm.ainfras.target.domain.Item.dto.RegisterItemsRequest;
 import io.goorm.ainfras.target.domain.Item.repository.ItemRepository;
+import io.goorm.ainfras.target.global.interceptor.LogPrinter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class ItemService {
     private final ItemConverter itemConverter;
 
     @Transactional
+    @LogPrinter
     public void saveItem(ItemDTO itemDTO) {
         Item item = itemConverter.convert(itemDTO);
         item.setSeller("unknown");
@@ -32,6 +34,7 @@ public class ItemService {
     }
 
     @Transactional
+    @LogPrinter
     public void saveItem(ItemDTO itemDTO, String seller) {
         Item item = itemConverter.convert(itemDTO);
         item.setSeller(seller);
@@ -41,6 +44,7 @@ public class ItemService {
     }
 
     @Transactional
+    @LogPrinter
     public RegisterItemResponse saveItems(RegisterItemsRequest request) {
         int cnt = 0;
 
@@ -59,9 +63,16 @@ public class ItemService {
         return response;
     }
 
+    @Transactional
+    @LogPrinter
     public List<Item> findItemList() {
         List<Item> items = itemRepository.findAll();
 
         return items;
+    }
+
+    @LogPrinter
+    public Item getItemById(Long itemId) {
+        return itemRepository.getReferenceById(itemId);
     }
 }

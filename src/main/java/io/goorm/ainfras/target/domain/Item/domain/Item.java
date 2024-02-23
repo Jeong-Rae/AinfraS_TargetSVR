@@ -5,8 +5,10 @@ import io.goorm.ainfras.target.global.util.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 @Entity
 @Table
 public class Item extends BaseTimeEntity {
