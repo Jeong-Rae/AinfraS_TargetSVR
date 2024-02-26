@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -76,6 +76,10 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     public void updatePassword(String password) {
         this.password = new BCryptPasswordEncoder().encode(password);
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public boolean checkPassword(String password) {
