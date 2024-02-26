@@ -1,0 +1,121 @@
+---
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mariadb-deploy
+    labels:
+        app: mariadb
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: mariadb
+    template:
+        metadata:
+            labels:
+                app: mariadb
+        spec:
+            containers:
+                - name: mariadb
+                  image: mariadb:10.6
+                  resources:
+                      requests:
+                          memory: "512Mi"
+                          cpu: "1000m"
+                      limits:
+                          memory: "2048Mi"
+                          cpu: "30000m"
+                  env:
+                      - name: MYSQL_ROOT_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: root_password
+                      - name: MYSQL_USER
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mariadb-config
+                                key: user
+                      - name: MYSQL_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: user_password
+                      - name: MYSQL_DATABASE
+                        value: "develop"
+                  ports:
+                      - containerPort: 3306
+                  volumeMounts:
+                      - name: mariadb-storage
+                        mountPath: /var/lib/mysql
+            volumes:
+                - name: mariadb-storage
+                  persistentVolumeClaim:
+                      claimName: mariadb-pvc
+---
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+    name: mariadb-svc
+    labels:
+        app: mariadb
+spec:
+    selector:
+        app: mariadb
+    ports:
+        - protocol: TCP
+          port: 3306
+          targetPort: 3306
+    type: ClusterIP
+---
+#PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: mariadb-pv
+    labels:
+        app: mariadb
+spec:
+    capacity:
+        storage: 10Gi
+    accessModes:
+        - ReadWriteOnce
+    storageClassName: standard
+    gcePersistentDisk:
+        pdName: mariadb-disk
+        fsType: ext4
+---
+#PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: mariadb-pvc
+    labels:
+        app: mariadb
+spec:
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 10Gi
+    storageClassName: standard
+---
+#Secret
+apiVersion: v1
+kind: Secret
+metadata:
+    name: mariadb-secret
+type: Opaque
+data:
+    root_password: cm9vdA==
+    user_password: MTIzNA==
+---
+#ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: mariadb-config
+data:
+    user: goorm_shop

@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: spring-app-deploy
+    labels:
+        app: spring-app
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: spring-app
+    template:
+        metadata:
+            labels:
+                app: spring-app
+        spec:
+            containers:
+                - name: spring-app
+                  image: jeongrae/target-svr:latest
+                  resources:
+                      requests:
+                          memory: "512Mi"
+                          cpu: "1000m"
+                      limits:
+                          memory: "2048Mi"
+                          cpu: "30000m"
+                  ports:
+                      - containerPort: 8080
+                  env:
+                      - name: SPRING_DATASOURCE_URL
+                        value: "jdbc:mariadb://mariadb-svc.default.svc.cluster.local:3306/develop"
+                      - name: SPRING_DATASOURCE_USERNAME
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mariadb-config
+                                key: user
+                      - name: SPRING_DATASOURCE_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: user_password
+---
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+    name: spring-app-svc
+    labels:
+        app: spring-app
+spec:
+    selector:
+        app: spring-app
+    ports:
+        - protocol: TCP
+          port: 5050
+          targetPort: 5050
+    type: ClusterIP
