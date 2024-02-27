@@ -1,24 +1,23 @@
 ---
-#Deployment
+#StatefulSet
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-    name: mariadb-deploy
-    labels:
-        app: mariadb
+    name: mariadb
 spec:
-    replicas: 1
     selector:
         matchLabels:
             app: mariadb
+    serviceName: "mariadb"
+    replicas: 1
     template:
         metadata:
             labels:
                 app: mariadb
         spec:
             containers:
-                - name: mariadb
-                  image: mariadb:10.6
+                - image: mariadb:10.6
+                  name: mariadb
                   resources:
                       requests:
                           memory: "512Mi"
@@ -46,6 +45,7 @@ spec:
                         value: "develop"
                   ports:
                       - containerPort: 3306
+                        name: mariadb
                   volumeMounts:
                       - name: mariadb-storage
                         mountPath: /var/lib/mysql
