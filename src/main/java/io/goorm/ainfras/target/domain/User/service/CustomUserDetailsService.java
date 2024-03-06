@@ -8,13 +8,12 @@ import io.goorm.ainfras.target.domain.User.dto.LoginResponse;
 import io.goorm.ainfras.target.domain.User.dto.SignUpRequest;
 import io.goorm.ainfras.target.domain.User.dto.SignUpResponse;
 import io.goorm.ainfras.target.domain.User.repository.UserRepository;
-import io.goorm.ainfras.target.global.interceptor.LogPrinter;
+import io.goorm.ainfras.target.global.interceptor.LogMonitoring;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.getUserByEmail(username)
                 .orElseThrow(() -> {
@@ -42,7 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public SignUpResponse saveUser(SignUpRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             LOGGER.info("[saveUser] 이미 사용중인 이메일, email: {}", request.email());
@@ -64,7 +63,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public LoginResponse loginUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> {

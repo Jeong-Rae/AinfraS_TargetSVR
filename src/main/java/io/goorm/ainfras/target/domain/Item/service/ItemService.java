@@ -6,7 +6,7 @@ import io.goorm.ainfras.target.domain.Item.dto.ItemDTO;
 import io.goorm.ainfras.target.domain.Item.dto.RegisterItemResponse;
 import io.goorm.ainfras.target.domain.Item.dto.RegisterItemsRequest;
 import io.goorm.ainfras.target.domain.Item.repository.ItemRepository;
-import io.goorm.ainfras.target.global.interceptor.LogPrinter;
+import io.goorm.ainfras.target.global.interceptor.LogMonitoring;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class ItemService {
     private final ItemConverter itemConverter;
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public void saveItem(ItemDTO itemDTO) {
         Item item = itemConverter.convert(itemDTO);
         item.setSeller("unknown");
@@ -34,7 +33,7 @@ public class ItemService {
     }
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public void saveItem(ItemDTO itemDTO, String seller) {
         Item item = itemConverter.convert(itemDTO);
         item.setSeller(seller);
@@ -44,7 +43,7 @@ public class ItemService {
     }
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public RegisterItemResponse saveItems(RegisterItemsRequest request) {
         int cnt = 0;
 
@@ -64,14 +63,14 @@ public class ItemService {
     }
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public List<Item> findItemList() {
         List<Item> items = itemRepository.findAll();
 
         return items;
     }
 
-    @LogPrinter
+    @LogMonitoring
     public Item getItemById(Long itemId) {
         return itemRepository.getReferenceById(itemId);
     }

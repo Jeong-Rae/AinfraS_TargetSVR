@@ -17,14 +17,7 @@ spec:
         spec:
             containers:
                 - name: spring-app
-                  image: jeongrae/target-svr:latest
-                  resources:
-                      requests:
-                          memory: "512Mi"
-                          cpu: "1000m"
-                      limits:
-                          memory: "2048Mi"
-                          cpu: "30000m"
+                  image: jeongrae/ainfras-target:latest
                   ports:
                       - containerPort: 8080
                   env:

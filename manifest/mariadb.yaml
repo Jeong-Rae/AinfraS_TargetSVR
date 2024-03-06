@@ -18,13 +18,6 @@ spec:
             containers:
                 - image: mariadb:10.6
                   name: mariadb
-                  resources:
-                      requests:
-                          memory: "512Mi"
-                          cpu: "1000m"
-                      limits:
-                          memory: "2048Mi"
-                          cpu: "30000m"
                   env:
                       - name: MYSQL_ROOT_PASSWORD
                         valueFrom:
@@ -75,17 +68,24 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
     name: mariadb-pv
-    labels:
-        app: mariadb
 spec:
     capacity:
         storage: 10Gi
+    volumeMode: Filesystem
     accessModes:
         - ReadWriteOnce
-    storageClassName: standard
-    gcePersistentDisk:
-        pdName: mariadb-disk
-        fsType: ext4
+    persistentVolumeReclaimPolicy: Retain
+    storageClassName: local-storage
+    local:
+        path: /mnt
+    nodeAffinity:
+        required:
+            nodeSelectorTerms:
+                - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values:
+                            - ip-192-168-137-18.ap-northeast-2.compute.internal
 ---
 #PersistentVolumeClaim
 apiVersion: v1
@@ -100,7 +100,7 @@ spec:
     resources:
         requests:
             storage: 10Gi
-    storageClassName: standard
+    storageClassName: local-storage
 ---
 #Secret
 apiVersion: v1
@@ -118,4 +118,4 @@ kind: ConfigMap
 metadata:
     name: mariadb-config
 data:
-    user: goorm_shop
+    user: "ainfras"

@@ -7,7 +7,7 @@ import io.goorm.ainfras.target.domain.Item.dto.AddCartItemRequest;
 import io.goorm.ainfras.target.domain.Item.dto.ItemDTO;
 import io.goorm.ainfras.target.domain.Item.repository.CartItemRepository;
 import io.goorm.ainfras.target.domain.User.domain.User;
-import io.goorm.ainfras.target.global.interceptor.LogPrinter;
+import io.goorm.ainfras.target.global.interceptor.LogMonitoring;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class CartItemService {
     private final ItemConverter itemConverter;
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public List<CartItem> getCartItemsByUserId(Long userId) {
         List<CartItem> cartItems = cartItemRepository.findByUserId(userId);
         LOGGER.info("[getCartItemsByUserId] 장바구니 조회, user: {}", userId);
@@ -34,7 +33,7 @@ public class CartItemService {
     }
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public List<ItemDTO> getItemsInCartByUser(User user) {
         List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
         return cartItems.stream()
@@ -43,7 +42,7 @@ public class CartItemService {
     }
 
     @Transactional
-    @LogPrinter
+    @LogMonitoring
     public CartItem saveCartItem(User user, AddCartItemRequest request) {
         Item item = itemService.getItemById(request.itemId());
         CartItem cartItem = CartItem.builder()
@@ -55,14 +54,14 @@ public class CartItemService {
         return cartItem;
     }
 
-    @LogPrinter
+    @LogMonitoring
     public int calcTotalPrice(List<ItemDTO> items) {
         return items.stream()
                 .mapToInt(ItemDTO::price)
                 .sum();
     }
 
-    @LogPrinter
+    @LogMonitoring
     public void clearCart(User user) {
         cartItemRepository.deleteByUserId(user.getId());
     }

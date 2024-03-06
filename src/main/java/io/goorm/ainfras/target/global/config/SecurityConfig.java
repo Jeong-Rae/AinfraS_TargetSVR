@@ -1,6 +1,7 @@
 package io.goorm.ainfras.target.global.config;
 
 import io.goorm.ainfras.target.global.filter.CustomCorsFilter;
+import io.goorm.ainfras.target.global.filter.ServletFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ public class SecurityConfig {
     private final AuthenticationProvider customAuthenticationProvider;
     private final AuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final AuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final ServletFilter servletFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -29,6 +31,7 @@ public class SecurityConfig {
                 .authenticationProvider(customAuthenticationProvider)
                 // CORS 설정
                 .addFilterBefore(customCorsFilter, CorsFilter.class)
+                .addFilterBefore(servletFilter, CorsFilter.class)
                 // CSRF 비활성화
                 .csrf(csrf -> csrf.disable())
                 // Session 비활성화

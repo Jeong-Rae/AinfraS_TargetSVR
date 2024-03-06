@@ -8,7 +8,7 @@ import io.goorm.ainfras.target.domain.Item.dto.RegisterItemsRequest;
 import io.goorm.ainfras.target.domain.Item.service.CartItemService;
 import io.goorm.ainfras.target.domain.Item.service.ItemService;
 import io.goorm.ainfras.target.domain.User.domain.User;
-import io.goorm.ainfras.target.global.interceptor.LogPrinter;
+import io.goorm.ainfras.target.global.interceptor.LogMonitoring;
 import io.goorm.ainfras.target.global.util.BasicResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class ItemController {
 
     @PostMapping("api/items")
     @ResponseBody
-    @LogPrinter
+    @LogMonitoring
     public ResponseEntity<RegisterItemResponse> registerItems(@RequestBody RegisterItemsRequest request) {
         RegisterItemResponse response = itemService.saveItems(request);
 
@@ -49,7 +49,7 @@ public class ItemController {
 
     @PostMapping("api/cart/items")
     @ResponseBody
-    @LogPrinter
+    @LogMonitoring
     public ResponseEntity<BasicResponse> addItemInShoppingCart(@AuthenticationPrincipal User user,
                                                                @RequestBody AddCartItemRequest request) {
         CartItem cartItem = cartItemService.saveCartItem(user, request);
@@ -59,7 +59,7 @@ public class ItemController {
 
     @PostMapping("/checkout")
     @ResponseBody
-    @LogPrinter
+    @LogMonitoring
     public ResponseEntity<BasicResponse> checkoutItem(@AuthenticationPrincipal User user) {
         cartItemService.clearCart(user);
         BasicResponse response = new BasicResponse("SUCCESS", null);

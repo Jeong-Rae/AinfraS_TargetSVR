@@ -1,0 +1,54 @@
+package io.goorm.ainfras.target.global.interceptor;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.UUID;
+
+@Component
+public class HttpLoggingInterceptor implements HandlerInterceptor {
+    private final Logger LOGGER = LoggerFactory.getLogger(HttpLoggingInterceptor.class);
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String requestURI = request.getRequestURI();
+        String requestAddr = getOriginRemoteAddr(request);
+        String requestID = UUID.randomUUID().toString();
+
+        request.setAttribute("RequestID", requestID);
+
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        }
+
+        LOGGER.info("[API Request]  RequestID: {}, RequestURI: {}, RequestHost: {}", requestID, requestURI, requestAddr);
+        return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        String requestURI = request.getRequestURI();
+        String requestID = request.getAttribute("RequestID").toString();
+
+        LOGGER.info("[API Response] RequestID: {}, RequestURI: {}", requestID, requestURI);
+
+        if (ex != null) {
+            LOGGER.error("[API Response] Error: ", ex);
+        }
+    }
+
+    private static String getOriginRemoteAddr(HttpServletRequest request) {
+        String originAddr = request.getHeader("X-Real-IP");
+
+        if (originAddr == null || originAddr.isBlank()) {
+            originAddr = request.getRemoteAddr();
+        }
+
+        return originAddr;
+    }
+}
