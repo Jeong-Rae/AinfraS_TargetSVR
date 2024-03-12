@@ -19,6 +19,26 @@ spec:
                 - name: spring-app
                   image: jeongrae/ainfras-target:latest
                   ports:
+                      - containerPort: 5050
+                  env:
+                      - name: SPRING_DATASOURCE_URL
+                        value: "jdbc:mariadb://mariadb-svc.default.svc.cluster.local:3306/develop"
+                      - name: SPRING_DATASOURCE_USERNAME
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mariadb-config
+                                key: user
+                      - name: SPRING_DATASOURCE_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: user_password
+                  volumeMounts:
+                      - name: log-volume
+                        mountPath: /app/log
+                - name: log-pilot
+                  image: jeongrae/ainfras-logpilot:v2
+                  ports:
                       - containerPort: 8080
                   env:
                       - name: SPRING_DATASOURCE_URL
@@ -33,6 +53,12 @@ spec:
                             secretKeyRef:
                                 name: mariadb-secret
                                 key: user_password
+                  volumeMounts:
+                      - name: log-volume
+                        mountPath: /app/log
+            volumes:
+                - name: log-volume
+                  emptyDir: {}
 ---
 #Service
 apiVersion: v1
@@ -48,4 +74,20 @@ spec:
         - protocol: TCP
           port: 5050
           targetPort: 5050
+    type: ClusterIP
+---
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+    name: log-pilot-svc
+    labels:
+        app: log-pilot
+spec:
+    selector:
+        app: log-pilot
+    ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
     type: ClusterIP
