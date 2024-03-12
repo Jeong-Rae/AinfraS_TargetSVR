@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/js/", "/static/js").permitAll()
                         .requestMatchers("/register").permitAll()
+                        .requestMatchers("/parsing/**", "kubeshark/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 폼 로그인 비활성화
