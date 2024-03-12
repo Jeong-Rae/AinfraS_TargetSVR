@@ -44,12 +44,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     @LogMonitoring
     public SignUpResponse saveUser(SignUpRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            LOGGER.info("[saveUser] 이미 사용중인 이메일, email: {}", request.email());
+            LOGGER.info("[saveUser] Message: 이미 사용중인 이메일 {},", request.email());
             throw new EntityExistsException("이미 사용중인 이메일입니다.");
         }
 
         if (userRepository.existsByNickname(request.nickname())) {
-            LOGGER.info("[saveUser] 이미 사용중인 닉네임, nickname: {}", request.nickname());
+            LOGGER.info("[saveUser] Message: 이미 사용중인 닉네임 {},", request.nickname());
             throw new EntityExistsException("이미 사용중인 닉네임입니다.");
         }
 
@@ -57,7 +57,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         user.updateRole(RoleType.USER);
         user.updatePassword(request.password());
         user = userRepository.save(user);
-        LOGGER.info("[saveUser] 신규 사용자 등록, email: {}", request.email());
+        LOGGER.info("[saveUser] Message: 신규 사용자 등록 {},", request.email());
 
         return userConverter.convert(user, SignUpResponse.class);
     }
@@ -67,12 +67,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     public LoginResponse loginUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> {
-                    LOGGER.info("[loginUser] 등록되지 않은 사용자, email: {}", request.email());
+                    LOGGER.info("[loginUser] Message: 등록되지 않은 사용자 {},", request.email());
                     return new EntityNotFoundException("이메일 또는 비밀번호가 잘못되었습니다.");
                 });
 
         if (!user.checkPassword(request.password())) {
-            LOGGER.info("[loginUser] 비밀번호가 틀렸습니다. email: {}", request.email());
+            LOGGER.info("[loginUser] Message:비밀번호가 틀렸습니다 {},", request.email());
             throw new EntityNotFoundException("이메일 또는 비밀번호가 잘못되었습니다");
         }
 

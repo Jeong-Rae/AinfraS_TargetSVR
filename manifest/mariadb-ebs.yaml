@@ -1,0 +1,97 @@
+---
+#StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: mariadb
+spec:
+    selector:
+        matchLabels:
+            app: mariadb
+    serviceName: "mariadb"
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: mariadb
+        spec:
+            containers:
+                - image: mariadb:10.6
+                  name: mariadb
+                  env:
+                      - name: MYSQL_ROOT_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: root_password
+                      - name: MYSQL_USER
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mariadb-config
+                                key: user
+                      - name: MYSQL_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mariadb-secret
+                                key: user_password
+                      - name: MYSQL_DATABASE
+                        value: "develop"
+                  ports:
+                      - containerPort: 3306
+                        name: mariadb
+                  volumeMounts:
+                      - name: mariadb-storage
+                        mountPath: /var/lib/mysql
+            volumes:
+                - name: mariadb-storage
+                  persistentVolumeClaim:
+                      claimName: mariadb-pvc
+---
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+    name: mariadb-svc
+    labels:
+        app: mariadb
+spec:
+    selector:
+        app: mariadb
+    ports:
+        - protocol: TCP
+          port: 3306
+          targetPort: 3306
+    type: ClusterIP
+---
+#PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: mariadb-pvc
+    labels:
+        app: mariadb
+spec:
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 10Gi
+    storageClassName: gp2
+---
+#Secret
+apiVersion: v1
+kind: Secret
+metadata:
+    name: mariadb-secret
+type: Opaque
+data:
+    root_password: cm9vdA==
+    user_password: MTIzNA==
+---
+#ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: mariadb-config
+data:
+    user: "ainfras"

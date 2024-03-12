@@ -39,12 +39,12 @@ public class UserService {
     public void updateUserNickname(User user, UpdateNicknameRequest request) {
         String raw = user.getNickname();
         if (userRepository.existsByNickname(request.nickname())) {
-            LOGGER.info("[updateUserNickname] 이미 사용중인 닉네임입니다. nickname: {} -> {}", raw, request.nickname());
+            LOGGER.info("[updateUserNickname] Message: 이미 사용중인 닉네임입니다. {} -> {},", raw, request.nickname());
             throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
         }
         user.updateNickname(request.nickname());
         userRepository.save(user);
-        LOGGER.info("[updateUserNickname] 닉네임이 변경되었습니다. nickname: {} -> {}", raw, request.nickname());
+        LOGGER.info("[updateUserNickname] Message: 닉네임이 변경되었습니다. {} -> {},", raw, request.nickname());
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class UserService {
         String raw = user.getNickname();
         user.updateNickname(request.password());
         userRepository.save(user);
-        LOGGER.info("[updateUserNickname] 비밀번호가 변경되었습니다. user: {}", user.getUsername());
+        LOGGER.info("[updateUserNickname] Message: 비밀번호가 변경되었습니다.");
     }
 
     @Transactional

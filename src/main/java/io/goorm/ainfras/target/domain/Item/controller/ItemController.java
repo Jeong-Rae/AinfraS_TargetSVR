@@ -36,6 +36,7 @@ public class ItemController {
     }
 
     @GetMapping("shopping-cart")
+    @LogMonitoring
     public String shoppingCart(@AuthenticationPrincipal User user, Model model) {
         System.out.println("cart email: "+user.getEmail());
         List<ItemDTO> items = cartItemService.getItemsInCartByUser(user);

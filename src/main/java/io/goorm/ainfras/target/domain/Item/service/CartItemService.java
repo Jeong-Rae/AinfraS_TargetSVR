@@ -28,7 +28,7 @@ public class CartItemService {
     @LogMonitoring
     public List<CartItem> getCartItemsByUserId(Long userId) {
         List<CartItem> cartItems = cartItemRepository.findByUserId(userId);
-        LOGGER.info("[getCartItemsByUserId] 장바구니 조회, user: {}", userId);
+        LOGGER.info("[getCartItemsByUserId] Message: 장바구니 조회");
         return cartItems;
     }
 
@@ -36,6 +36,7 @@ public class CartItemService {
     @LogMonitoring
     public List<ItemDTO> getItemsInCartByUser(User user) {
         List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
+        LOGGER.info("[getItemsInCartByUser] Message: 장바구니 조회");
         return cartItems.stream()
                 .map(cartItem -> itemConverter.convert(cartItem.getItem()))
                 .toList();
