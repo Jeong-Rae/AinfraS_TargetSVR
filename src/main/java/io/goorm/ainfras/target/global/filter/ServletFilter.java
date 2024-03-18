@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class ServletFilter extends OncePerRequestFilter {
@@ -19,6 +20,23 @@ public class ServletFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String requestAddr = getOriginRemoteAddr(request);
+
+        StringBuilder sb = new StringBuilder();
+
+
+        sb.append("\n").append("[HTTP MESSAGE]").append("\n");
+        sb.append(request.getMethod()).append(" ")
+                .append(request.getRequestURI()).append(" ")
+                .append(request.getProtocol()).append("\n");
+        Collections.list(request.getHeaderNames())
+                .forEach(headerName ->
+                        sb.append(headerName).append(": ")
+                                .append(request.getHeader(headerName)).append("\n")
+                );
+        sb.append("[/HTTP MESSAGE]").append("\n");
+
+        LOGGER.info(sb.toString());
+
 
         LOGGER.info("[ServletFilter] RequestURI: {}, RequestHost: {}", requestURI, requestAddr);
         filterChain.doFilter(request, response);
