@@ -82,10 +82,10 @@ kind: Service
 metadata:
     name: log-pilot-svc
     labels:
-        app: log-pilot
+        app: spring-app
 spec:
     selector:
-        app: log-pilot
+        app: spring-app
     ports:
         - protocol: TCP
           port: 8080

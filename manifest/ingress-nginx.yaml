@@ -21,10 +21,3 @@ spec:
                             name: spring-app-svc
                             port:
                                 number: 5050
-                  - path: /kubeshark # Adding a new path for Kubeshark
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: kubeshark-front # Pointing to the Kubeshark front-end service
-                            port:
-                                number: 80 # The port on which Kubeshark front-end service is running
