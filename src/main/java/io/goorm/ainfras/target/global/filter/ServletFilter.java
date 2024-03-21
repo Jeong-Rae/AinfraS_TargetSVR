@@ -15,24 +15,33 @@ import java.util.Collections;
 @Component
 public class ServletFilter extends OncePerRequestFilter {
     private final Logger LOGGER = LoggerFactory.getLogger(ServletFilter.class);
+    private final String HOST = "a206770186a284a10a33d0dc2643cb0f-640062525.ap-northeast-2.elb.amazonaws.com";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String requestAddr = getOriginRemoteAddr(request);
 
+        CustomHttpServletRequestWrapper wrappedRequest = new CustomHttpServletRequestWrapper(request);
+        String body = wrappedRequest.getBody();
+
         StringBuilder sb = new StringBuilder();
 
 
         sb.append("\n").append("[HTTP MESSAGE]").append("\n");
-        sb.append(request.getMethod()).append(" ")
-                .append(request.getRequestURI()).append(" ")
-                .append(request.getProtocol()).append("\n");
+        // 메서드
+        sb
+                .append(request.getMethod()).append(" ")
+                .append(HOST).append(request.getRequestURI()).append(" ") // 로케이션
+                .append(request.getProtocol()).append("\n"); // 프로토콜
         Collections.list(request.getHeaderNames())
                 .forEach(headerName ->
                         sb.append(headerName).append(": ")
                                 .append(request.getHeader(headerName)).append("\n")
                 );
+
+        sb.append("\n").append(body).append("\n");
+
         sb.append("[/HTTP MESSAGE]").append("\n");
 
         LOGGER.info(sb.toString());
