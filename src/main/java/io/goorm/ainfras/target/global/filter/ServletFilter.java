@@ -22,8 +22,8 @@ public class ServletFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String requestAddr = getOriginRemoteAddr(request);
 
-        CustomHttpServletRequestWrapper wrappedRequest = new CustomHttpServletRequestWrapper(request);
-        String body = wrappedRequest.getBody();
+        //CustomHttpServletRequestWrapper wrappedRequest = new CustomHttpServletRequestWrapper(request);
+        //String body = wrappedRequest.getBody();
 
         StringBuilder sb = new StringBuilder();
 
@@ -43,7 +43,7 @@ public class ServletFilter extends OncePerRequestFilter {
                                 .append(request.getHeader(headerName)).append("\n")
                 );
 
-        sb.append("\n").append(body).append("\n");
+        //sb.append("\n").append(body).append("\n");
 
         sb.append("[/HTTP MESSAGE]").append("\n");
 
@@ -51,7 +51,8 @@ public class ServletFilter extends OncePerRequestFilter {
 
 
         LOGGER.info("[ServletFilter] RequestURI: {}, RequestHost: {}", requestURI, requestAddr);
-        filterChain.doFilter(wrappedRequest, response);
+        //filterChain.doFilter(wrappedRequest, response);
+        filterChain.doFilter(request, response);
     }
 
     private static String getOriginRemoteAddr(HttpServletRequest request) {
