@@ -35,7 +35,7 @@ spec:
                                 key: user_password
                   volumeMounts:
                       - name: log-volume
-                        mountPath: /app/log
+                        mountPath: /app/logs
                 - name: log-pilot
                   image: jeongrae/ainfras-logpilot:v2
                   ports:
@@ -55,7 +55,7 @@ spec:
                                 key: user_password
                   volumeMounts:
                       - name: log-volume
-                        mountPath: /app/log
+                        mountPath: /app/logs
             volumes:
                 - name: log-volume
                   emptyDir: {}
