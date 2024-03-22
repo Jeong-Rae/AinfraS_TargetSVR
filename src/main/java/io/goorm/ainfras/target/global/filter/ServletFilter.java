@@ -29,10 +29,13 @@ public class ServletFilter extends OncePerRequestFilter {
 
 
         sb.append("\n").append("[HTTP MESSAGE]").append("\n");
-        // 메서드
+        String queryString = request.getQueryString(); // 쿼리 스트링 가져오기
+        // 쿼리 스트링 URI에 추가
+        String urlWithQueryString = request.getRequestURI() + (queryString != null ? "?" + queryString : "");
+
         sb
                 .append(request.getMethod()).append(" ")
-                .append(HOST).append(request.getRequestURI()).append(" ") // 로케이션
+                .append(HOST).append(urlWithQueryString).append(" ") // 로케이션에 쿼리 추가
                 .append(request.getProtocol()).append("\n"); // 프로토콜
         Collections.list(request.getHeaderNames())
                 .forEach(headerName ->
@@ -48,7 +51,7 @@ public class ServletFilter extends OncePerRequestFilter {
 
 
         LOGGER.info("[ServletFilter] RequestURI: {}, RequestHost: {}", requestURI, requestAddr);
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(wrappedRequest, response);
     }
 
     private static String getOriginRemoteAddr(HttpServletRequest request) {
