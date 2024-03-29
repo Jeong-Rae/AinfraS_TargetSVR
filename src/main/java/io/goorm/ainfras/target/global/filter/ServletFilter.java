@@ -9,8 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collections;
+
 
 @Component
 public class ServletFilter extends OncePerRequestFilter {
@@ -22,10 +25,19 @@ public class ServletFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String requestAddr = getOriginRemoteAddr(request);
 
-        //CustomHttpServletRequestWrapper wrappedRequest = new CustomHttpServletRequestWrapper(request);
-        //String body = wrappedRequest.getBody();
+        CachedHttpServletRequest cachedHttpServletRequest = new CachedHttpServletRequest(request);
 
         StringBuilder sb = new StringBuilder();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(cachedHttpServletRequest.getInputStream()));
+        String line;
+        StringBuilder bodyBuilder = new StringBuilder();
+        while ((line = reader.readLine()) != null) {
+            bodyBuilder.append(line);
+        }
+        String body = bodyBuilder.toString();
+
+
 
 
         sb.append("\n").append("[HTTP MESSAGE]").append("\n");
@@ -42,17 +54,18 @@ public class ServletFilter extends OncePerRequestFilter {
                         sb.append(headerName).append(": ")
                                 .append(request.getHeader(headerName)).append("\n")
                 );
-
-        //sb.append("\n").append(body).append("\n");
+        sb.append("\n").append(body).append("\n");
 
         sb.append("[/HTTP MESSAGE]").append("\n");
+
+
 
         LOGGER.info(sb.toString());
 
 
         LOGGER.info("[ServletFilter] RequestURI: {}, RequestHost: {}", requestURI, requestAddr);
-        //filterChain.doFilter(wrappedRequest, response);
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(cachedHttpServletRequest, response);
+        //filterChain.doFilter(request, response);
     }
 
     private static String getOriginRemoteAddr(HttpServletRequest request) {

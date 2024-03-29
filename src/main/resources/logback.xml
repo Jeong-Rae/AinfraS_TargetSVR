@@ -32,7 +32,7 @@
     </appender>
 
     <root level="DEBUG">
-<!--        <appender-ref ref="DEBUG-FILE-APPENDER"/>-->
+        <appender-ref ref="DEBUG-FILE-APPENDER"/>
         <appender-ref ref="INFO-FILE-APPENDER"/>
     </root>
 

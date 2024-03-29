@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,8 @@ public class ItemService {
         item = itemRepository.save(item);
         item.generateCode();
         itemRepository.save(item);
+
+        Map<Integer, Integer> m = new HashMap<>();
     }
 
     @Transactional
